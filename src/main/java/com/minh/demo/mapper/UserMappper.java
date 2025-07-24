@@ -16,6 +16,19 @@ public class UserMappper {
 
     }
 
+public void updateEnityFromDto(User entity, UserDto dto) {
+        if (entity = null || dto = null){
+            return;
+        }
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
+        entity.setRole(dto.getRole());
+        entity.setAddress(dto.getAddress());
+
+        return entity;
+}
+
 
     public UserReponseDto toDto(User entity){
         UserReponseDto dto = new UserReponseDto();
