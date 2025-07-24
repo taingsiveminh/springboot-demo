@@ -1,9 +1,10 @@
 package com.minh.demo.service;
 
+import com.minh.demo.dto.UserReponseDto;
 import com.minh.demo.entity.User;
 import com.minh.demo.model.BaseResponseModel;
 import com.minh.demo.model.BaseResponseWithDataModel;
-import com.minh.demo.model.UserModel;
+import com.minh.demo.dto.UserDto;
 import com.minh.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,16 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserMappper mapper;
+
 
     public ResponseEntity<BaseResponseWithDataModel> listUsers() {
-        List<User> userData = userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        List<UserReponseDto> dtos = mapper.toDoList(users);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success","successfully retrieve users",userData));
+                .body(new BaseResponseWithDataModel("success","successfully retrieve users",dtos));
     }
 
     public ResponseEntity<BaseResponseWithDataModel> getUser(Long userId) {
@@ -33,19 +38,14 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponseWithDataModel("fail","user not found with id : " + userId,null));
         }
+        UserReponseDto dto = mapper.toDto(user.get());
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success","user found",user.get()));
+                .body(new BaseResponseWithDataModel("success","user found",dto));
     }
 
-    public ResponseEntity<BaseResponseModel> createUser(UserModel payload) {
-        User user = new User();
-        user.setName(payload.getName());
-        user.setAddress(payload.getAddress());
-        user.setAge(payload.getAge());
-        user.setEmail(payload.getEmail());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setRole(payload.getRole());
+    public ResponseEntity<BaseResponseModel> createUser(UserDto payload) {
+        User user = mapper.toEnity(payload);
 
         userRepository.save(user);
 
@@ -54,7 +54,7 @@ public class UserService {
                 .body(new BaseResponseModel("success","successfully created user"));
     }
 
-    public ResponseEntity<BaseResponseModel> updateUser(UserModel payload, Long userId) {
+    public ResponseEntity<BaseResponseModel> updateUser(UserDto payload, Long userId) {
         Optional<User> existing = userRepository.findById(userId);
 
         // if user not found, then response 404

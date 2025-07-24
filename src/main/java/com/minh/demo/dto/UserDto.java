@@ -1,11 +1,11 @@
-package com.minh.demo.model;
+package com.minh.demo.dto;
 
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModel {
+public class UserDto {
     private Long id;
     private String name;
     private Integer age;

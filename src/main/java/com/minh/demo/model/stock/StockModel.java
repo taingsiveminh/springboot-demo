@@ -1,4 +1,4 @@
-package com.minh.demo.stock;
+package com.minh.demo.model.stock;
 
 import lombok.Data;
 
